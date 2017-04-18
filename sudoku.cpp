@@ -4,20 +4,23 @@ typedef long long ll;
 
 vector<int> y[729]; //options -> cons
 vector<int> soln;
+int solution[10][10];
 map<int, set<int> > x, tx; //cons -> options
 void select(map<int, set<int> >& tx, int opt){
     set<int> rops;
     set<int>::iterator j;
     for(int i=0; i<y[opt].size(); i++){
         int sc = y[opt][i];
-        for(j = x[sc].begin(); j != x[sc].end(); j++){
+        for(j = tx[sc].begin(); j != tx[sc].end(); j++){
             rops.insert(*j);
         }
     }
     for(j = rops.begin(); j != rops.end(); j++){
         for(int i=0; i<y[*j].size(); i++){
             int con = y[*j][i];
-            x[con].erase(*j);
+            //cout << "sb: " << tx[con].size() << endl;
+            tx[con].erase(*j);
+            //cout << "sf: " << tx[con].size() << endl;
         }
     }
 }
@@ -33,10 +36,17 @@ int find_min(map<int, set<int> >& tx){
     }
     return res;
 }
+bool stop;
 void solve(map<int, set<int> >& tx){
-    if(soln.size() == 729){
-        //print answer
-
+    if(stop) return;
+    if(soln.size() == 81){
+        for(int i=0; i<soln.size(); i++){
+            int r = soln[i]/81;
+            int c = (soln[i]%81)/9;
+            int v = soln[i]%9;
+            solution[r+1][c+1] = v+1;
+        }
+        stop = true;
         return;
     }
     int con = find_min(tx);
@@ -46,6 +56,7 @@ void solve(map<int, set<int> >& tx){
         int op = *j;
         map<int, set<int> > ttx = tx;
         select(ttx, op);
+        soln.push_back(op);
         solve(ttx);
         soln.pop_back();
     }
@@ -72,13 +83,20 @@ int main()
         for(int j=0; j<9; j++){
             int c = getchar();
             if(c != '.'){
-                int v = c-'0';
+                int v = c-'0'-1;
+                soln.push_back(81*i+9*j+v);
                 select(tx, 81*i+9*j+v);
             }
         }
         getchar();
     }
     solve(tx);
+    for(int i=1; i<=9; i++){
+        for(int j=1; j<=9; j++){
+            cout << solution[i][j];
+        }
+        cout << endl;
+    }
 
     return 0;
 }
