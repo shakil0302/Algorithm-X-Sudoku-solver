@@ -2,19 +2,40 @@
 using namespace std;
 typedef long long ll;
 
-vector<int> y[729];
+vector<int> y[729]; //options -> cons
 vector<int> soln;
-map<int, set<int> > x, tx;
+map<int, set<int> > x, tx; //cons -> options
 void select(map<int, set<int> >& tx, int opt){
-    set<int> rcons;
+    set<int> rops;
     set<int>::iterator j;
     for(int i=0; i<y[opt].size(); i++){
         int sc = y[opt][i];
         for(j = x[sc].begin(); j != x[sc].end(); j++){
-            rcons.insert(*j);
+            rops.insert(*j);
         }
     }
+    for(j = rops.begin(); j != rops.end(); j++){
+        for(int i=0; i<y[*j].size(); i++){
+            int con = y[*j][i];
+            x[con].erase(*j);
+        }
+    }
+}
+void solve(map<int, set<int> >& tx){
+    if(soln.size() == 729){
+        //print answer
 
+        return;
+    }
+    set<int>::iterator j;
+    int con = find_min(tx);
+    for(j = tx[con].begin(); j != tx[con].end(); j++){
+        int op = *j;
+        map<int, set<int> > ttx = tx;
+        select(ttx, op);
+        solve(ttx);
+        soln.pop_back();
+    }
 }
 int main()
 {
@@ -44,6 +65,7 @@ int main()
         }
         getchar();
     }
+    solve(tx);
 
     return 0;
 }
