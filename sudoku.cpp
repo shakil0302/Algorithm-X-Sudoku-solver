@@ -21,14 +21,27 @@ void select(map<int, set<int> >& tx, int opt){
         }
     }
 }
+int find_min(map<int, set<int> >& tx){
+    int res = -1;
+    int ls = INT_MAX;
+    for(int i=0; i<243; i++){
+        int cs = tx[i].size();
+        if(cs != 0 && (res == -1 || ls > cs)){
+            res = i;
+            ls = cs;
+        }
+    }
+    return res;
+}
 void solve(map<int, set<int> >& tx){
     if(soln.size() == 729){
         //print answer
 
         return;
     }
-    set<int>::iterator j;
     int con = find_min(tx);
+    if(con == -1) return;
+    set<int>::iterator j;
     for(j = tx[con].begin(); j != tx[con].end(); j++){
         int op = *j;
         map<int, set<int> > ttx = tx;
